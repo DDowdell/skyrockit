@@ -51,15 +51,6 @@ app.get("/", (req, res) => {
   });
 });
 
-//GET /(vip lounge)
-app.get("/vip-lounge", (req, res) => {
-  if (req.session.user) {
-    res.send(`Welcome to the party ${req.session.user.username}!`);
-  } else {
-    res.send("Sorry, no guests allowed!");
-  }
-});
-
 //Routes above=====================================================================
 app.listen(port, () => {
   console.log(`The express app is ready on port ${port}!`);
