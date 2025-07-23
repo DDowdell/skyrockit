@@ -8,13 +8,13 @@ const methodOverride = require('method-override');
 const morgan = require('morgan');
 const session = require('express-session');
 
+const isSignedIn = require('./middleware/is-signed-in.js');
+const passUserToView = require('./middleware/pass-user-to-view.js');
+
 const authController = require('./controllers/auth.js');
 
 // Set the port from environment variable or default to 3000
 const port = process.env.PORT ? process.env.PORT : '3000';
-
-
-
 
 //Connections==================================================================
 mongoose.connect(process.env.MONGODB_URI);
@@ -39,7 +39,8 @@ app.use(
         saveUninitialized: true,
     })
 );
-app.use('/auth', authController);
+
+app.use(passUserToView);
 
 
 //Routes below==================================================================
@@ -50,6 +51,9 @@ app.get("/", (req, res) => {
     user: req.session.user,
   });
 });
+
+app.use('/auth', authController);
+app.use(isSignedIn);
 
 //Routes above=====================================================================
 app.listen(port, () => {
