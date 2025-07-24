@@ -8,12 +8,17 @@ const User = require('../models/user.js');
 //GET (home page)
 router.get('/', async (req, res) => {
   try {
-    res.render('applications/index.ejs');
+    const currentUser = await User.findById(req.session.user._id);// Look up user from req.session
+
+    res.render('applications/index.ejs', {// Render index.ejs, passing in all of current user's applications as data in context object.
+      applications: currentUser.applications,
+    });
   } catch (error) {
     console.log(error);
     res.redirect('/');
   }
 });
+
 
 //GET /new
 router.get('/new', async (req, res) => {
@@ -36,6 +41,23 @@ router.post('/', async (req, res) => {
     res.redirect('/');
   }
 });
+
+//GET (show page)
+router.get('/:applicationId', async (req, res) => {
+  try {
+    const currentUser = await User.findById(req.session.user._id);//Find application by applicationId supplied from req.params
+
+    const application = currentUser.applications.id(req.params.applicationId);//Render show view, passing application data in context object
+
+    res.render('applications/show.ejs', {
+      application: application,
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect('/');
+  }
+});
+
 
 
 
